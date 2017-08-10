@@ -20,7 +20,7 @@ fi
 
 OUTPUTS="$1"
 
-if [ "$2" == "--exclusive" ]; then
+if [ "$2" = "--exclusive" ]; then
     EXCLUSIVE=1
     TESTS_SKIP="$3"
     EXISTING_LOGS="$4"
@@ -47,11 +47,11 @@ while IFS= read SCENARIO_FILE; do
 
    if [ -n "$TESTS_SKIP" ]; then 
       if [ "$EXCLUSIVE" -eq "1" ]; then
-          if ! [ -n "$(fgrep "$SCENARIO_MODULE_BASE" "$TESTS_SKIP")" ]; then
+          if ! [ -n "$(grep "^$SCENARIO_MODULE_BASE\$" "$TESTS_SKIP")" ]; then
               continue
           fi
       else
-          if [ -n "$(fgrep "$SCENARIO_MODULE_BASE" "$TESTS_SKIP")" ]; then
+          if [ -n "$(grep "^$SCENARIO_MODULE_BASE\$" "$TESTS_SKIP")" ]; then
               continue
           fi
       fi
