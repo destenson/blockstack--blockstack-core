@@ -1,7 +1,7 @@
 #!/bin/sh
 
 usage() {
-   echo "Usage: $0 [path/to/test/output/dir] [OPTIONAL: path/to/tests/to/skip.txt] [OPTIONAL: path/to/existing/test/logdir/]"
+   echo "Usage: $0 [path/to/test/output/dir] [OPTION: --exclusive] [OPTIONAL: path/to/tests/to/skip.txt] [OPTIONAL: path/to/existing/test/logdir/]"
    exit 1
 }
 
@@ -19,8 +19,16 @@ if [ $? -ne 0 ]; then
 fi
 
 OUTPUTS="$1"
-TESTS_SKIP="$2"
-EXISTING_LOGS="$3"
+
+if [ "$2" == "--exclusive" ]; then
+    EXCLUSIVE=1
+    TESTS_SKIP="$3"
+    EXISTING_LOGS="$4"
+else
+    EXCLUSIVE=0
+    TESTS_SKIP="$2"
+    EXISTING_LOGS="$3"
+fi
 
 test -d "$OUTPUTS" || mkdir -p "$OUTPUTS"
 
@@ -37,8 +45,16 @@ while IFS= read SCENARIO_FILE; do
    SCENARIO_MODULE_BASE="$(echo "$SCENARIO_FILE" | sed 's/\.py//g')"
    SCENARIO_MODULE="$SCENARIOS_PYTHON.$SCENARIO_MODULE_BASE"
 
-   if [ -n "$TESTS_SKIP" ] && [ -n "$(fgrep "$SCENARIO_MODULE_BASE" "$TESTS_SKIP")" ]; then 
-      continue
+   if [ -n "$TESTS_SKIP" ] && ; then 
+      if [ "$EXCLUSIVE" -eq "1" ]; then
+          if ! [ -n "$(fgrep "$SCENARIO_MODULE_BASE" "$TESTS_SKIP")" ]; then
+              continue
+          fi
+      else
+          if [ -n "$(fgrep "$SCENARIO_MODULE_BASE" "$TESTS_SKIP")" ]; then
+              continue
+          fi
+      fi
    fi
 
    TESTDIR="/tmp/blockstack-test"
