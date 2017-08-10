@@ -45,7 +45,7 @@ while IFS= read SCENARIO_FILE; do
    SCENARIO_MODULE_BASE="$(echo "$SCENARIO_FILE" | sed 's/\.py//g')"
    SCENARIO_MODULE="$SCENARIOS_PYTHON.$SCENARIO_MODULE_BASE"
 
-   if [ -n "$TESTS_SKIP" ] && ; then 
+   if [ -n "$TESTS_SKIP" ]; then 
       if [ "$EXCLUSIVE" -eq "1" ]; then
           if ! [ -n "$(fgrep "$SCENARIO_MODULE_BASE" "$TESTS_SKIP")" ]; then
               continue
